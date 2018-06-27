@@ -1,0 +1,63 @@
+
+<div id="app">
+  {{ title }}
+  <h1  v-if="!initiated">LOADING...</h1>
+  <div v-else-if="!anyChildren && initiated">
+    <h2> Aucun enfants disponible!</h2>
+  </div>
+  <ol v-else>
+    <li style="vote > 0 ? 'color:red;' : 'color:green;'" v-for="child in childrenByLove">
+      name: {{ child.name }} vote: {{ child.vote }}
+      <button @click='upVoteChild(child)'>UpVote!</button>
+      <button @click='downVoteChild(child)'>DownVote!</button>
+    </li>
+    
+  </ol>
+
+  <div>
+    <input v-model="newChildrenName" />
+    <button @click="addChild">add!!</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script>
+
+const app = new Vue({
+  el: '#app',
+  data: {
+    title: 'Meilleur App de chat disponible!',
+    initiated: false,
+    children: [ ],
+    newChildrenName: ''
+  },
+  created() {
+      setTimeout(() => {
+        this.children = [ {name: 'mat', vote: 0}, { name: 'wgf', vote: 1} ];
+        this.initiated = true;
+      }, 1500)
+  },
+  methods: {
+    upVoteChild: function(child) {
+      this.children.find(c => c.name === child.name).vote++;
+    },
+    downVoteChild: function(child) {
+      this.children.find(c => c.name === child.name).vote--;
+    },
+    addChild: function() {
+      this.children.push({ name: this.newChildrenName, vote: 0 });
+      this.newChildrenName = '';
+    }
+  },
+  computed: {
+    anyChildren: function() {
+      const { children } = this;
+      return children.length > 0;
+    },
+    childrenByLove: function() {
+      return this.children.sort((c1, c2) => c2.vote - c1.vote);
+    }
+  }
+
+});
+</script>
